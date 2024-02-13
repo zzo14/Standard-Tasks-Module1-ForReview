@@ -5,19 +5,20 @@ This project will help interns at MVP Studio to understand how ReactJs, C# Web A
 
 ## Structure
 ### Front End
-  * LinkedIn url & GitHub url
-  * Description
-  * User Details Component
-  * Address & Nationality
-  * Languages
-  * Skills
-  * Work experience
-  * Visa status
-  * Job seeking status
-  * Photo upload
+* LinkedIn url & GitHub url
+* Description
+* User Details Component
+* Address & Nationality
+* Languages
+* Skills
+* Work experience
+* Visa status
+* Job seeking status
+* Photo upload
+  
 ### Back End
-  * Talent.Common
-    ** FileService.cs for reading, saving and deleting files from AWS S3 Bucket.
-  * Talent.Services.Profile
-    ** ProfileController.cs - finished "UpdateProfilePhoto" API function.
-    ** ProfileService.cs - finished "GetTalentProfile", "UpdateTalentProfile" and "UpdateTalentPhoto" functions.
+* Talent.Common
+  * FileService.cs for reading, saving and deleting files from AWS S3 Bucket.
+* Talent.Services.Profile
+  * ProfileController.cs - finished "UpdateProfilePhoto" API function.
+  * ProfileService.cs - finished "GetTalentProfile", "UpdateTalentProfile" and "UpdateTalentPhoto" functions.
