@@ -32,7 +32,15 @@ namespace Talent.Common.Services
             //Your code here;
             //throw new NotImplementedException();
             string bucketName = "talent-advanced-task";
-            return await _awsService.GetPresignedUrlObject(id, bucketName);
+            var objects = await _awsService.GetAllObjectFromS3(bucketName);
+            if (objects.Any(o => o.Key == id))
+            {
+                return await _awsService.GetPresignedUrlObject(id, bucketName);
+            }
+            else
+            {
+                return "";
+            }
         }
 
         public async Task<string> SaveFile(IFormFile file, FileType type)
