@@ -17,6 +17,7 @@ This project will help interns at MVP Studio to understand how ReactJs, C# Web A
 * Photo upload
   
 ### Back End
+> For the back end, can view my completed code by searching for "// Code by @Patrick Zou".
 * Talent.Common
   * FileService.cs for reading, saving and deleting files from AWS S3 Bucket.
 * Talent.Services.Profile
