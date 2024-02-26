@@ -577,6 +577,7 @@ namespace Talent.Services.Profile.Domain.Services
 
         protected AddLanguageViewModel ViewModelFromLanguage(UserLanguage language, string Id)
         {
+            // Code by @Patrick Zou
             return new AddLanguageViewModel
             {
                 Id = language.Id,
@@ -588,6 +589,7 @@ namespace Talent.Services.Profile.Domain.Services
 
         protected AddEducationViewModel ViewModelFromEducation(UserEducation education)
         {
+            // Code by @Patrick Zou
             return new AddEducationViewModel
             {
                 Id = education.Id,
@@ -601,6 +603,7 @@ namespace Talent.Services.Profile.Domain.Services
 
         protected AddCertificationViewModel ViewModelFromCertification(UserCertification certification)
         {
+            // Code by @Patrick Zou
             return new AddCertificationViewModel
             {
                 Id = certification.Id,
@@ -612,6 +615,7 @@ namespace Talent.Services.Profile.Domain.Services
 
         protected ExperienceViewModel ViewModelFromExperience(UserExperience experience)
         {
+            // Code by @Patrick Zou        
             return new ExperienceViewModel
             {
                 Id = experience.Id,
