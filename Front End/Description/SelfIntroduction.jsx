@@ -23,11 +23,15 @@ export default class SelfIntroduction extends React.Component {
     }
 
     saveContact() {
-        const data = {
-            summary: this.state.summary,
-            description: this.state.description
-        };
-        this.props.updateProfileData(data);
+        try {
+            const data = {
+                summary: this.state.summary,
+                description: this.state.description
+            };
+            this.props.updateProfileData(data);
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     componentDidUpdate(prevProps) {
