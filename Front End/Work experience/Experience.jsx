@@ -8,7 +8,7 @@ export default class Experience extends React.Component {
     constructor(props) {
         super(props);
 
-        const experienceData = this.props.experienceData ?
+        const initialExperienceData = this.props.experienceData ?
             Object.assign([], this.props.experienceData)
             : [
                 {
@@ -23,7 +23,7 @@ export default class Experience extends React.Component {
         this.state = {
             showAddSection: false,
             showEditSection: false,
-            newExperience: experienceData,
+            newExperience: initialExperienceData,
             editingExpId: null
         }
 
@@ -50,6 +50,7 @@ export default class Experience extends React.Component {
 
     openAdd() {
         const exp = {
+            id: `temp-${Date.now()}`, 
             company: "",
             position: "",
             responsibilities: "",
@@ -97,29 +98,33 @@ export default class Experience extends React.Component {
 
     saveExperience() {
         const { company, position, responsibilities, start, end } = this.state.newExperience;
-        if (company === "" || position === "" || responsibilities === "" || start === "" || end === "") {
-            TalentUtil.notification.show("Please enter all the fields", "error", null, null);
-            return;
-        }
-        if (end <= start) {
-            TalentUtil.notification.show("End date must be later than start date.", "error", null, null)
-            return;
-        }
 
-        let experience = this.props.experienceData.slice();
-        if (this.state.editingExpId === null) {
-            const newExp = { company, position, responsibilities, start, end };
-            experience = experience.concat(newExp);
-        } else {
-            experience = experience.map(exp => {
-                if (exp.id === this.state.editingExpId) {
-                    return Object.assign({}, exp, { company, position, responsibilities, start, end });
-                }
-                return exp;
-            });
+        try {
+            if (company === "" || position === "" || responsibilities === "" || start === "" || end === "") {
+                throw new Error("Please enter all the fields");
+            }
+            if (end <= start) {
+                throw new Error("End date must be later than start date.");
+            }
+
+            let experience = this.props.experienceData.slice();
+            if (this.state.editingExpId === null) {
+                const newExp = Object.assign({}, this.state.newExperience, { company, position, responsibilities, start, end });
+                experience.push(newExp);
+            } else {
+                experience = experience.map(exp => {
+                    if (exp.id === this.state.editingExpId) {
+                        return Object.assign({}, exp, { company, position, responsibilities, start, end });
+                    }
+                    return exp;
+                });
+            }
+            this.props.updateProfileData({ experience });
+            this.closeEdit_Add()
+        } catch (error) {
+            TalentUtil.notification.show(error.message, "error", null, null)
+            return;
         }
-        this.props.updateProfileData({ experience });
-        this.closeEdit_Add()
     }
 
     formatDate(dateString) {
@@ -274,7 +279,6 @@ export default class Experience extends React.Component {
                                 name="responsibilities"
                                 value={responsibilities}
                                 controlFunc={this.handleChange}
-                                maxLength={6}
                                 placeholder="Responsibilities"
                                 errorMessage="Please enter a valid responsibilities"
                             />
