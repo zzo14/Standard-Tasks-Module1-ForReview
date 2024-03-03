@@ -6,7 +6,7 @@ export class IndividualDetailSection extends Component {
     constructor(props) {
         super(props)
 
-        const details = props.details ?
+        const initialDetails = props.details ?
             Object.assign({}, props.details)
             : {
                 firstName: "",
@@ -17,7 +17,7 @@ export class IndividualDetailSection extends Component {
 
         this.state = {
             showEditSection: false,
-            newContact: details
+            newContact: initialDetails
         }
 
         this.openEdit = this.openEdit.bind(this)
@@ -29,10 +29,10 @@ export class IndividualDetailSection extends Component {
     }
 
     openEdit() {
-        const details = Object.assign({}, this.props.details)
+        const currentDetails = Object.assign({}, this.props.details)
         this.setState({
             showEditSection: true,
-            newContact: details
+            newContact: currentDetails
         })
     }
 
@@ -51,22 +51,22 @@ export class IndividualDetailSection extends Component {
     }
 
     saveContact() {
-        console.log(this.props.componentId)
-        console.log(this.state.newContact)
         const data = Object.assign({}, this.state.newContact)
+        try {
+            if (data.email && !data.email.includes('@')) {
+                throw new Error("Please enter a valid email");
+            }
+            const isNumberValid = /^\+?\d+$/.test(data.phone);
+            if (data.phone && !isNumberValid) {
+                throw new Error("Please enter a valid phone number");
+            }
 
-        if (data.email && !data.email.includes('@')) {
-            TalentUtil.notification.show("Please enter a valid email", "error", null, null)
-            return;
+            this.props.controlFunc(this.props.componentId, data)
+            this.closeEdit()
+        } catch (error) {
+            TalentUtil.notification.show(error.message, "error", null, null)
+            return
         }
-        const isNumberValid = "" || /^\+?\d+$/.test(data.phone);
-        if (data.phone && !isNumberValid) {
-            TalentUtil.notification.show("Please enter a valid phone number", "error", null, null)
-            return;
-        }
-
-        this.props.controlFunc(this.props.componentId, data)
-        this.closeEdit()
     }
 
     render() {
