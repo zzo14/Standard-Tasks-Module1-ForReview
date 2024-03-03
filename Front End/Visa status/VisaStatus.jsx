@@ -57,14 +57,18 @@ export default class VisaStatus extends React.Component {
     }
 
     saveVisaExpiryDate() {
-        if (this.state.visaExpiryDate === "") {
-            TalentUtil.notification.show("Please enter a valid date", "error", null, null);
+        try {
+            if (this.state.visaExpiryDate === "") {
+                throw new Error("Please enter a valid date");
+            }
+            this.props.saveProfileData({
+                visaStatus: this.state.visaStatus,
+                visaExpiryDate: this.state.visaExpiryDate
+            });
+        } catch (error) {
+            TalentUtil.notification.show(error.message, "error", null, null);
             return;
         }
-        this.props.saveProfileData({
-            visaStatus: this.state.visaStatus,
-            visaExpiryDate: this.state.visaExpiryDate
-        });
     }
 
     visaOptions() {
