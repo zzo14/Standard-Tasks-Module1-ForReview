@@ -7,7 +7,7 @@ export default class SocialMediaLinkedAccount extends React.Component {
     constructor(props) {
         super(props);
 
-        const linkedAccounts = props.linkedAccounts ?
+        const initialLinkedAccounts = props.linkedAccounts ?
             Object.assign({}, props.linkedAccounts)
             : {
                 linkedIn: "",
@@ -16,7 +16,7 @@ export default class SocialMediaLinkedAccount extends React.Component {
 
         this.state = {
             showEditSection: false,
-            newLinkedAccounts: linkedAccounts
+            newLinkedAccounts: initialLinkedAccounts 
         }
 
         this.openEdit = this.openEdit.bind(this)
@@ -33,10 +33,10 @@ export default class SocialMediaLinkedAccount extends React.Component {
     }
 
     openEdit() {
-        const linkedAccounts = Object.assign({}, this.props.linkedAccounts)
+        const currentLinkedAccounts = Object.assign({}, this.props.linkedAccounts)
         this.setState({
             showEditSection: true,
-            newLinkedAccounts: linkedAccounts
+            newLinkedAccounts: currentLinkedAccounts
         })
     }
 
@@ -55,15 +55,19 @@ export default class SocialMediaLinkedAccount extends React.Component {
     }
 
     saveContact() {
-        const data = Object.assign({}, this.state.newLinkedAccounts)
-        const undateData = {
-            linkedAccounts: {
-                linkedIn: data.linkedIn,
-                github: data.github
+        try {
+            const data = Object.assign({}, this.state.newLinkedAccounts)
+            const undateData = {
+                linkedAccounts: {
+                    linkedIn: data.linkedIn,
+                    github: data.github
+                }
             }
+            this.props.saveProfileData(undateData)
+            this.closeEdit()
+        } catch (error) {
+            console.log(error)
         }
-        this.props.saveProfileData(undateData)
-        this.closeEdit()
     }
 
     render() {
