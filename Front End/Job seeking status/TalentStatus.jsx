@@ -30,14 +30,18 @@ export default class TalentStatus extends React.Component {
     }
 
     saveContact() {
-        const data = Object.assign({}, this.state.newStatus)
-        const updateData = {
-            jobSeekingStatus: {
-                status: data.status,
-                availableDate: null
+        try {
+            const data = Object.assign({}, this.state.newStatus)
+            const updateData = {
+                jobSeekingStatus: {
+                    status: data.status,
+                    availableDate: null
+                }
             }
+            this.props.saveProfileData(updateData)
+        } catch (error) {
+            console.log(error)
         }
-        this.props.saveProfileData(updateData)
     }
 
     componentDidUpdate(prevProps) {
