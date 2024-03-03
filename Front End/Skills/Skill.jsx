@@ -9,7 +9,7 @@ export default class Skill extends React.Component {
     constructor(props) {
         super(props);
 
-        const skillData = props.skillData ?
+        const initialSkillData = props.skillData ?
             Object.assign([], props.skillData)
             : [
                 {
@@ -20,7 +20,7 @@ export default class Skill extends React.Component {
         this.state = {
             showEditSection: false,
             showAddSection: false,
-            newSkill: skillData,
+            newSkill: initialSkillData,
             editingSkillId: null,
         }
 
@@ -47,6 +47,7 @@ export default class Skill extends React.Component {
 
     openAdd() {
         const skills = {
+            id: `temp-${Date.now()}`,
             name: "",
             level: "",
         }
@@ -85,25 +86,29 @@ export default class Skill extends React.Component {
 
     saveSkill() {
         const { name, level } = this.state.newSkill;
-        if (name === "" || level === "") {
-            TalentUtil.notification.show("Please select a valid skill and level", "error", null, null);
+        try {
+            if (name === "" || level === "") {
+                throw new Error("Please select a valid skill and level");
+            }
+
+            let skills = this.props.skillData.slice();
+            if (this.state.editingSkillId === null) {
+                const newSkill = Object.assign({}, this.state.newSkill, { name, level })
+                skills.push(newSkill);
+            } else {
+                skills = skills.map(skill => {
+                    if (skill.id === this.state.editingSkillId) {
+                        return Object.assign({}, skill, { name, level });
+                    }
+                    return skill;
+                });
+            }
+            this.props.updateProfileData({ skills });
+            this.closeEdit_Add();
+        } catch (error) {
+            TalentUtil.notification.show(error.message, "error", null, null);
             return;
         }
-
-        let skills = this.props.skillData.slice();
-        if (this.state.editingSkillId === null) {
-            const newSkill = { name, level };
-            skills = skills.concat(newSkill);
-        } else {
-            skills = skills.map(skill => {
-                if (skill.id === this.state.editingSkillId) {
-                    return Object.assign({}, skill, { name, level });
-                }
-                return skill;
-            });
-        }
-        this.props.updateProfileData({ skills });
-        this.closeEdit_Add();
     }
 
     levelOptions() {
@@ -134,7 +139,7 @@ export default class Skill extends React.Component {
                         <TableHeader>
                             <TableRow>
                                 <TableHeaderCell>Skill</TableHeaderCell>
-                                <TableHeaderCell>Levle</TableHeaderCell>
+                                <TableHeaderCell>Level</TableHeaderCell>
                                 <TableHeaderCell>
                                     <Button type="button" className="ui right floated teal button" onClick={this.openAdd}>
                                         <Icon name="plus" />Add New
