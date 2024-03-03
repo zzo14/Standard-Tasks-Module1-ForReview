@@ -37,8 +37,12 @@ export default class PhotoUpload extends Component {
 
 
     savePhoto() {
-        this.props.updateProfileData(this.state.newPhoto);
-        this.setState({ showUploadButton: false }, this.saveFunction);
+        try {
+            this.props.updateProfileData(this.state.newPhoto);
+            this.setState({ showUploadButton: false }, this.saveFunction);
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     saveFunction() {
