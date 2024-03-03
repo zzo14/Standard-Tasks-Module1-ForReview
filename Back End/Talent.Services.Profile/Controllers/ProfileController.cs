@@ -245,20 +245,27 @@ namespace Talent.Services.Profile.Controllers
         {
             // Code by @Patrick Zou
             //Your code here;
-            if (Request.Form.Files.Count > 0)
+            try
             {
-                IFormFile file = Request.Form.Files[0];
-                var userId = _userAppContext.CurrentUserId;
-
-                if (await _profileService.UpdateTalentPhoto(userId, file))
+                if (Request.Form.Files.Count > 0)
                 {
-                    return Json(new { Success = true });
+                    IFormFile file = Request.Form.Files[0];
+                    var userId = _userAppContext.CurrentUserId;
+
+                    if (await _profileService.UpdateTalentPhoto(userId, file))
+                    {
+                        return Json(new { Success = true });
+                    }
+                    return Json(new { Success = false });
                 }
-                return Json(new { Success = false });
+                else
+                {
+                    return Json(new { Success = false, Message = "No file uploaded." });
+                }
             }
-            else
+            catch (Exception e)
             {
-                return Json(new { Success = false, Message = "No file uploaded." });
+                return Json(new { Success = false, Message = e.Message });
             }
         }
 
