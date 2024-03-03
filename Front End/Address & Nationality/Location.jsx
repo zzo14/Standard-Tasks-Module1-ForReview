@@ -9,7 +9,7 @@ export class Address extends React.Component {
     constructor(props) {
         super(props)
 
-        const addressData = props.addressData ?
+        const initialAddressData = props.addressData ?
             Object.assign({}, props.addressData)
             : {
                 number: "",
@@ -22,7 +22,7 @@ export class Address extends React.Component {
 
         this.state = {
             showEditSection: false,
-            newAddress: addressData
+            newAddress: initialAddressData
         }
 
         this.openEdit = this.openEdit.bind(this)
@@ -34,10 +34,10 @@ export class Address extends React.Component {
     }
 
     openEdit() {
-        const address = Object.assign({}, this.props.addressData)
+        const currentAddress = Object.assign({}, this.props.addressData)
         this.setState({
             showEditSection: true,
-            newAddress: address
+            newAddress: currentAddress
         })
     }
 
@@ -74,25 +74,27 @@ export class Address extends React.Component {
             }
         };
 
-        if (updatedData.address.number === "" || updatedData.address.street === "" || updatedData.address.suburb === "" || updatedData.address.postCode === "" || updatedData.address.city === "" || updatedData.address.country === "") {
-            TalentUtil.notification.show("Please enter a valid address", "error", null, null)
-            return;
-        }
+        try {
+            if (updatedData.address.number === "" || updatedData.address.street === "" || updatedData.address.suburb === "" || updatedData.address.postCode === "" || updatedData.address.city === "" || updatedData.address.country === "") {
+                throw new Error("Please enter a valid address")
+            }
 
-        const isNumberValid = /^[a-zA-Z0-9]*\d+[a-zA-Z0-9]*$/.test(updatedData.address.number);
-        const isPostCodeValid = /^(?!0+$)\d+$/.test(updatedData.address.postCode);
-        if (!isNumberValid) {
-            TalentUtil.notification.show("Please enter a valid address number", "error", null, null)
-            return;
-        }
-        if (!isPostCodeValid) {
-            TalentUtil.notification.show("Please enter a valid post code", "error", null, null)
-            return;
-        }
+            const isNumberValid = /^[a-zA-Z0-9]*\d+[a-zA-Z0-9]*$/.test(updatedData.address.number);
+            const isPostCodeValid = /^(?!0+$)\d+$/.test(updatedData.address.postCode);
+            if (!isNumberValid) {
+                throw new Error("Please enter a valid address number")
+            }
+            if (!isPostCodeValid) {
+                throw new Error("Please enter a valid post code")
+            }
 
-        //this.props.updateProfileData(updatedData)
-        this.props.saveProfileData(updatedData)
-        this.closeEdit()
+            //this.props.updateProfileData(updatedData)
+            this.props.saveProfileData(updatedData)
+            this.closeEdit()
+        } catch (error) {
+            TalentUtil.notification.show(error.message, "error", null, null)
+            return;
+        }
     }
 
     render() {
@@ -237,10 +239,14 @@ export class Nationality extends React.Component {
     }
 
     saveContact() {
-        const data = {
-            nationality: this.state.nationality,
-        };
-        this.props.saveProfileData(data)
+        try {
+            const data = {
+                nationality: this.state.nationality,
+            };
+            this.props.saveProfileData(data)
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     componentDidUpdate(prevProps) {
