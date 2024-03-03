@@ -9,7 +9,7 @@ export default class Language extends React.Component {
     constructor(props) {
         super(props);
 
-        const languageData = props.languageData ?
+        const initialLanguageData = props.languageData ?
             Object.assign([], props.languageData)
             : [
                 {
@@ -20,7 +20,7 @@ export default class Language extends React.Component {
         this.state = {
             showEditSection: false,
             showAddSection: false,
-            newLanguage: languageData,
+            newLanguage: initialLanguageData,
             editingLanguageId: null,
         }
 
@@ -47,6 +47,7 @@ export default class Language extends React.Component {
 
     openAdd() {
         const languages = {
+            id: `temp-${Date.now()}`,
             name: "",
             level: "",
         }
@@ -85,25 +86,30 @@ export default class Language extends React.Component {
 
     saveLanguage() {
         const { name, level } = this.state.newLanguage;
-        if (name === "" || level === "") {
-            TalentUtil.notification.show("Please select a valid language and level", "error", null, null);
+
+        try {
+            if (name === "" || level === "") {
+                throw new Error("Please select a valid language and level");
+            }
+
+            let languages = this.props.languageData.slice();
+            if (this.state.editingLanguageId === null) {
+                const newLanguage = Object.assign({}, this.state.newLanguage, { name, level });
+                languages.push(newLanguage);
+            } else {
+                languages = languages.map(lang => {
+                    if (lang.id === this.state.editingLanguageId) {
+                        return Object.assign({}, lang, { name, level });
+                    }
+                    return lang;
+                });
+            }
+            this.props.updateProfileData({ languages });
+            this.closeEdit_Add();
+        } catch (error) {
+            TalentUtil.notification.show(error.message, "error", null, null)
             return;
         }
-         
-        let languages = this.props.languageData.slice();
-        if (this.state.editingLanguageId === null) {
-            const newLanguage = { name, level };
-            languages = languages.concat(newLanguage);
-        } else {
-            languages = languages.map(lang => {
-                if (lang.id === this.state.editingLanguageId) {
-                    return Object.assign({}, lang, { name, level });
-                }
-                return lang;
-            });
-        }
-        this.props.updateProfileData({ languages });
-        this.closeEdit_Add();
     }
 
     levelOptions() {
@@ -134,7 +140,7 @@ export default class Language extends React.Component {
                         <TableHeader>
                             <TableRow>
                                 <TableHeaderCell>Language</TableHeaderCell>
-                                <TableHeaderCell>Levle</TableHeaderCell>
+                                <TableHeaderCell>Level</TableHeaderCell>
                                 <TableHeaderCell>
                                     <Button type="button" className="ui right floated teal button" onClick={this.openAdd}>
                                         <Icon name="plus" />Add New
